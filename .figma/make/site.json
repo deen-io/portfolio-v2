@@ -1,0 +1,10 @@
+{
+  "description": "Showcases a senior software engineer's expertise and projects with a clean, elegant portfolio designed to attract recruiters and hiring managers.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
