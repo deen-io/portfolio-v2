@@ -1,46 +1,63 @@
 import { useEffect, useState } from "react";
+import ChatWidget from "./ChatWidget";
 
 const projects = [
   {
     number: "01",
-    title: "ERP Universe",
-    role: "Software Engineer",
-    description:
-      "An enterprise platform spanning procurement, inventory, work orders, fleet operations, and goods receipts.",
+    title: "Waybilling & Logistics System",
+    role: "Web Developer",
+    description: "Manual shipment tracking caused delays and poor visibility across the business.",
     story:
-      "Complex operational workflows needed a reliable, maintainable foundation. Dina contributed backend development across four major modules—including procurement—shaping APIs, relational models, and business workflows built to evolve.",
-    tech: ["TypeScript", "NestJS", "TypeORM", "PostgreSQL", "React", "DevExtreme", "Docker", "AWS"],
-    variant: "erp",
+      "I built a centralized platform with real-time delivery tracking and coordination tools, replacing paper-based workflows and improving delivery tracking accuracy across operations.",
+    tech: ["PHP", "MySQL", "JavaScript"],
+    variant: "logistics",
+    sticker: "Improved tracking accuracy",
+    windowTitle: "waybill.tracking",
   },
   {
     number: "02",
-    title: "Billing System Modernization",
+    title: "Job Searching Platform",
     role: "Full Stack Developer",
-    description:
-      "A ground-up rebuild of a legacy VB.NET billing system as a modern Laravel application.",
+    description: "Manual job matching limited efficiency for a nationwide recruitment business.",
     story:
-      "A report process that once took about a day was reduced to minutes. The solution combined redesigned database structures, clearer API endpoints, optimized queries, stronger table relationships, and appropriate indexes.",
-    tech: ["PHP", "Laravel", "Relational Databases", "REST APIs"],
-    variant: "billing",
+      "I built a nationwide platform with automated candidate-job matching and custom job postings, enabling faster, more consistent matching at scale.",
+    tech: ["Laravel", "WordPress", "MySQL"],
+    variant: "recruitment",
+    sticker: "Faster nationwide matching",
+    windowTitle: "jobs.platform",
+    demo: "https://pfs.persol-group.co.jp",
   },
   {
     number: "03",
-    title: "Business Applications",
-    role: "Full Stack Developer",
-    description:
-      "Business applications supporting administrative, employee, payroll, and accounting workflows.",
+    title: "Procurement & Inventory System",
+    role: "Software Engineer",
+    description: "Disconnected processes led to poor stock visibility across procurement and inventory.",
     story:
-      "Data-heavy operational processes require clarity and consistency. Dina delivered practical Laravel applications that connected business rules, relational data, and everyday administrative workflows.",
-    tech: ["PHP", "Laravel", "Relational Databases"],
-    variant: "hr",
+      "I contributed to an integrated ERP module with approval flows and real-time tracking, enhancing stock visibility across operations.",
+    tech: ["React", "Node.js", "PostgreSQL"],
+    variant: "erp",
+    sticker: "Real-time stock visibility",
+    windowTitle: "operations.dashboard",
+  },
+  {
+    number: "04",
+    title: "EV Charging Spots App",
+    role: "Full Stack Developer",
+    description: "EV drivers faced range anxiety without a reliable way to plan charging stops.",
+    story:
+      "I helped build an AI-driven mobile app that recommends optimal charging stations along a route, reducing driver range anxiety.",
+    tech: ["Python", "Laravel", "Flutter", "PostgreSQL"],
+    variant: "ai",
+    sticker: "Reduced range anxiety",
+    windowTitle: "charge.finder",
   },
 ];
 
 const skillGroups = [
-  ["Backend", "TypeScript · NestJS · PHP · Laravel · REST API Development"],
-  ["Database", "PostgreSQL · TypeORM · Relational Database Design · Query Optimization · Indexing"],
-  ["Frontend", "React · DevExtreme · JavaScript · HTML · CSS"],
-  ["Tools & Practices", "Git · Docker · AWS · Code Reviews · Debugging · Performance Optimization · AI-assisted Development"],
+  ["Backend", "JavaScript · TypeScript · PHP · Python · Ruby · Node.js · Laravel · Express · Ruby on Rails · REST APIs"],
+  ["Database", "PostgreSQL · MySQL · MongoDB · Redis · Query Optimization · Relational & NoSQL Design"],
+  ["Frontend", "React · Vue.js · JavaScript · HTML · CSS"],
+  ["Tools & Practices", "Git · GitHub Actions · Docker · Nginx · AWS · CI/CD · Code Reviews · AI-assisted Development"],
 ];
 
 function Arrow() {
@@ -51,25 +68,31 @@ function Button({
   children,
   href,
   tone = "dark",
+  onClick,
 }: {
   children: React.ReactNode;
   href: string;
   tone?: "dark" | "light";
+  onClick?: () => void;
 }) {
   return (
-    <a className={`button button--${tone}`} href={href}>
+    <a className={`button button--${tone}`} href={href} onClick={onClick}>
       <span>{children}</span>
       <Arrow />
     </a>
   );
 }
 
-function ProjectVisual({ variant }: { variant: string }) {
+function openChatWidget() {
+  window.dispatchEvent(new Event("open-chat-widget"));
+}
+
+function ProjectVisual({ variant, windowTitle, sticker }: { variant: string; windowTitle: string; sticker: string }) {
   return (
     <div className={`project-visual project-visual--${variant}`} aria-label="Anonymized interface mockup">
       <div className="window-bar">
         <span className="window-dots"><i /><i /><i /></span>
-        <span>{variant === "erp" ? "operations.dashboard" : variant === "billing" ? "reports.generate" : "people.workspace"}</span>
+        <span>{windowTitle}</span>
         <span>×</span>
       </div>
       <div className="mock-sidebar">
@@ -87,7 +110,7 @@ function ProjectVisual({ variant }: { variant: string }) {
         <div className="mock-rows"><i /><i /><i /></div>
       </div>
       <span className="visual-note">Conceptual interface · not a production screenshot</span>
-      <span className="visual-sticker">{variant === "billing" ? "1 day → minutes" : variant === "erp" ? "4 core modules" : "built for real work"}</span>
+      <span className="visual-sticker">{sticker}</span>
     </div>
   );
 }
@@ -102,7 +125,7 @@ function Project({ project }: { project: (typeof projects)[number] }) {
           <h3>{project.title}</h3>
         </div>
       </div>
-      <ProjectVisual variant={project.variant} />
+      <ProjectVisual variant={project.variant} windowTitle={project.windowTitle} sticker={project.sticker} />
       <div className="project-details">
         <p className="project-lede">{project.description}</p>
         <div>
@@ -110,7 +133,13 @@ function Project({ project }: { project: (typeof projects)[number] }) {
           <ul className="tech-list">
             {project.tech.map((item) => <li key={item}>{item}</li>)}
           </ul>
-          <p className="case-note">Case study available on request</p>
+          {project.demo ? (
+            <a className="text-link" href={project.demo} target="_blank" rel="noreferrer">
+              View live demo <Arrow />
+            </a>
+          ) : (
+            <p className="case-note">Case study available on request</p>
+          )}
         </div>
       </div>
     </article>
@@ -142,7 +171,7 @@ export default function App() {
     <div className="site-shell">
       <header className="nav-wrap">
         <nav className="nav container" aria-label="Primary navigation">
-          <a className="wordmark" href="#top" aria-label="Dina Fajardo, home">DINA<span>.EXE</span></a>
+          <a className="wordmark" href="#top" aria-label="Dina Fajardo, home">dina <span>fajardo</span></a>
           <button
             className="menu-button"
             aria-expanded={menuOpen}
@@ -153,11 +182,28 @@ export default function App() {
           </button>
           <div className={`nav-links ${menuOpen ? "is-open" : ""}`} id="nav-links">
             {navItems.map(([id, label]) => (
-              <a className={active === id ? "active" : ""} href={`#${id}`} key={id} onClick={() => setMenuOpen(false)}>
+              <a
+                className={active === id ? "active" : ""}
+                href={`#${id}`}
+                key={id}
+                onClick={() => {
+                  setMenuOpen(false);
+                  if (id === "contact") openChatWidget();
+                }}
+              >
                 {label}
               </a>
             ))}
-            <a className="nav-cta" href="#contact" onClick={() => setMenuOpen(false)}>Resume on request <Arrow /></a>
+            <a
+              className="nav-cta"
+              href="#contact"
+              onClick={() => {
+                setMenuOpen(false);
+                openChatWidget();
+              }}
+            >
+              Resume on request <Arrow />
+            </a>
           </div>
         </nav>
       </header>
@@ -167,7 +213,7 @@ export default function App() {
           <span className="ambient ambient--one" />
           <span className="ambient ambient--two" />
           <div className="hero-copy">
-            <p className="eyebrow hero-label"><span>●</span> Software Engineer · 10 years</p>
+            <p className="eyebrow hero-label"><span>●</span> Senior Full-Stack Software Engineer · 10+ years</p>
             <h1 aria-label="Dina Fajardo"><span>DI</span><span>NA</span></h1>
             <p className="scribble scribble--hero">complicated → useful</p>
           </div>
@@ -184,19 +230,19 @@ export default function App() {
             </div>
           </div>
           <div className="hero-aside">
-            <span className="status-pill"><i /> Availability: ask Dina</span>
-            <h2>I make complicated things work.</h2>
+            <span className="status-pill"><i /> Cebu City, PH · Open to remote</span>
+            <h2>I build scalable, reliable systems that solve real business problems.</h2>
             <p>
-              Building reliable systems, untangling database problems, and turning business requirements into
-              software people can actually use.
+              10+ years building SaaS and enterprise platforms for logistics, procurement, and recruitment
+              businesses — turning business requirements into software people actually use.
             </p>
             <div className="hero-actions">
               <Button href="#work">Explore my work</Button>
-              <Button href="#contact" tone="light">Request resume</Button>
+              <Button href="#contact" tone="light" onClick={openChatWidget}>Get in touch</Button>
             </div>
           </div>
           <div className="hero-foot">
-            <p>10 years in practice</p><span>Backend systems</span><span>API design</span><span>Full-stack delivery</span>
+            <p>10+ years experience</p><span>20+ projects completed</span><span>10+ happy clients</span>
             <p className="scroll-note">Scroll to explore <span>↓</span></p>
           </div>
         </section>
@@ -209,15 +255,15 @@ export default function App() {
           <div className="about-windows reveal">
             <article className="glass-window about-window about-window--one">
               <div className="mini-bar"><span>about_dina.txt</span><span>×</span></div>
-              <p className="about-statement">Software engineer. Problem solver. Forever curious about how things work under the hood.</p>
+              <p className="about-statement">I build systems that quietly just work — for the people running the business.</p>
             </article>
             <article className="glass-window about-window about-window--two">
               <div className="mini-bar"><span>engineering_philosophy.md</span><span>×</span></div>
-              <p>For 10 years, I’ve worked across business applications, backend systems, databases, and full-stack development. I enjoy solving complex problems and building maintainable software.</p>
+              <p>10+ years building SaaS and enterprise platforms across logistics, procurement, and recruitment. I specialize in Node.js and Laravel backends, RESTful API design, and end-to-end feature delivery. Available for full-time, contract, and senior engineer roles.</p>
             </article>
             <article className="glass-window about-window about-window--three">
               <div className="mini-bar"><span>current_stack.json</span><span>×</span></div>
-              <code>{"{ backend: [NestJS, Laravel], data: PostgreSQL, frontend: React }"}</code>
+              <code>{"{ backend: [Node.js, Laravel], data: PostgreSQL, frontend: [React, Vue.js] }"}</code>
             </article>
           </div>
         </section>
@@ -240,23 +286,30 @@ export default function App() {
           <div className="timeline">
             <article className="timeline-item reveal">
               <div><span className="timeline-dot" /><p className="eyebrow">February 2021 — Present</p></div>
-              <div><h3>Cody Web Development</h3><p className="role">Software Engineer</p></div>
+              <div><h3>Cody Web Development Inc.</h3><p className="role">Software Engineer</p></div>
               <ul>
-                <li>Backend development for enterprise ERP modules</li>
-                <li>API development, relational modeling, query tuning</li>
-                <li>Full-stack contributions with React and DevExtreme</li>
-                <li>Code reviews, coding standards, and junior developer mentoring</li>
-                <li>Collaboration with teammates and business stakeholders</li>
+                <li>Develops scalable backend services supporting thousands of daily transactions</li>
+                <li>Designs secure REST APIs for enterprise applications</li>
+                <li>Delivers end-to-end features across React, Vue.js, and AWS</li>
+                <li>Collaborates with teammates and business stakeholders in Agile teams</li>
               </ul>
             </article>
             <article className="timeline-item reveal">
-              <div><span className="timeline-dot" /><p className="eyebrow">Approximately 2 years</p></div>
-              <div><h3>Previous Company</h3><p className="role">Full Stack Developer</p></div>
+              <div><span className="timeline-dot" /><p className="eyebrow">2020 — 2022</p></div>
+              <div><h3>Kredo IT Abroad Inc.</h3><p className="role">IT Teacher (Part-Time)</p></div>
               <ul>
-                <li>Modernization of a legacy billing system</li>
-                <li>Laravel-based business application development</li>
-                <li>Database redesign, API implementation, reporting improvements</li>
-                <li>HR, payroll, accounting, and administrative workflows</li>
+                <li>Delivered international curriculum IT classes</li>
+                <li>Prepared teaching materials and lesson plans</li>
+                <li>Mentored students transitioning into tech careers</li>
+              </ul>
+            </article>
+            <article className="timeline-item reveal">
+              <div><span className="timeline-dot" /><p className="eyebrow">2016 — 2021</p></div>
+              <div><h3>Daily Overland Freight Forwarders</h3><p className="role">Web Developer</p></div>
+              <ul>
+                <li>Built internal management systems, cutting manual processing time by 40%</li>
+                <li>Improved database performance by 33%</li>
+                <li>Led development across four business modules</li>
               </ul>
             </article>
           </div>
@@ -278,25 +331,13 @@ export default function App() {
           </div>
         </section>
 
-        <section className="contact section" id="contact">
-          <div className="container">
-            <p className="section-index">05 / Contact</p>
-            <div className="contact-main">
-              <h2>Got a good problem<br /><em>for me?</em></h2>
-              <div>
-                <p>Let’s build something useful.</p>
-                <p className="contact-note">Contact details, professional profiles, and résumé available on request.</p>
-                <a className="text-link" href="#top">Return to DINA.EXE <Arrow /></a>
-              </div>
-            </div>
-            <footer>
-          <a className="wordmark" href="#top">DINA<span>.EXE</span></a>
-              <p>Software Engineer · Backend & Full Stack</p>
-              <a href="#top">Back to top ↑</a>
-            </footer>
-          </div>
-        </section>
       </main>
+      <footer className="site-footer container">
+        <a className="wordmark" href="#top">dina <span>fajardo</span></a>
+        <p>Senior Full-Stack Software Engineer</p>
+        <a href="#top">Back to top ↑</a>
+      </footer>
+      <ChatWidget />
     </div>
   );
 }
